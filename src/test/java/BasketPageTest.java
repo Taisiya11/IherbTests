@@ -12,38 +12,62 @@ import java.util.concurrent.TimeUnit;
 public class BasketPageTest {
     private WebDriver driver;
     private BasketPage basketPage;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\Илья\\Downloads\\chromedriver_win32\\chromedriver.exe");
         driver = new ChromeDriver();
-        driver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         basketPage = new BasketPage(driver);
-        driver.get("https://checkout4.iherb.com/cart");
+        driver.get("https://www.iherb.com/pr/Derma-E-Sensitive-Skin-Moisturizing-Cream-2-oz-56-g/6371");
+        BasketPage addToCartButtonFirstProduct = basketPage.clickAddToCartButton();
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+        }
+        BasketPage pageBasket = basketPage.clickBasketButton();
     }
 
     @Test
-    public void headerCart() {
-        BasketPage searchBox = basketPage.typeDermaE("Derma E Sensitive Skin Moisturizing Cream");
-        BasketPage searchButton =basketPage.clickSearchButton();
-        driver.findElement(By.xpath(".//*[@class='icon welcome-mat-module-close']")).click();
-        BasketPage addToCartFirstProduct =basketPage.clickAddToCartButton();
-        basketPage.clickAddToCartButton();
-        BasketPage addToCartSecondProduct =basketPage.clickAddToCartSecondProductButton();
-        BasketPage headerCartButton =basketPage.clickHeaderCartButton();
-        String positions1 = basketPage.getItemsInTheBasketText();
-        Assert.assertEquals("3 items in your cart",positions1);
-        BasketPage removeButton = basketPage.clickRemoveButton();
-        String positions2 = basketPage.getItemsInTheBasketText();
-        Assert.assertEquals("2 items in your cart",positions2);
-        BasketPage selectQuantity = basketPage.clickSelectQuantity();
-        String positions3 = basketPage.getItemsInTheBasketText();
-        Assert.assertEquals("3 items in your cart",positions3);
+    public void quantityItems() {
+        String positions = basketPage.getItemsInTheBasketText();
+        Assert.assertEquals("Позиций в вашей корзине: 1", positions);
+    }
 
+    @Test
+    public void checkoutButton() {
+        Assert.assertTrue(basketPage.clickCheckoutButton());
+    }
+
+    @Test
+    public void removeProduct() {
+        BasketPage removeButton = basketPage.clickRemoveButton();
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+        }
+        Assert.assertFalse(basketPage.clickCheckoutButton());
+    }
+
+    @Test
+    public void selectQuantity() {
+        BasketPage selectQuantity = basketPage.clickSelectQuantity();
+        Assert.assertTrue(basketPage.clickCheckoutButton());
+    }
+
+    @Test
+    public void removeAllProducts() {
+        BasketPage removeAllProducts = basketPage.clickRemoveAllItemsButton();
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+        }
+        Assert.assertFalse(basketPage.clickCheckoutButton());
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         driver.quit();
     }
 }
