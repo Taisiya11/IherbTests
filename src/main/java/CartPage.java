@@ -2,6 +2,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 public class BasketPage {
     WebDriver driver;
 
